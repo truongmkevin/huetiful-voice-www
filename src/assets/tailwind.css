@@ -1,0 +1,10 @@
+@tailwind base;
+
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap');
+
+body {
+  @apply bg-gray-900;
+}
+@tailwind components;
+
+@tailwind utilities;
