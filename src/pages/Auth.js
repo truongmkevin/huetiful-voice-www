@@ -1,7 +1,8 @@
-import React, { useReducer, useCallback } from 'react';
+import React, { useState, useReducer, useCallback, useContext } from 'react';
 
 import Input from '../components/Input';
-import { VALIDATOR_REQUIRE, VALIDATOR_MINLENGTH } from '../util/inputValidators';
+import { AuthContext } from '../context/authContext';
+import { VALIDATOR_EMAIL, VALIDATOR_MINLENGTH } from '../util/inputValidators';
 
 const authReducer = (state, action) => {
   switch (action.type) {
@@ -29,6 +30,10 @@ const authReducer = (state, action) => {
 
 const Auth = () => {
 
+  const auth = useContext(AuthContext);
+
+  const [isLoginMode, setIsLoginMode] = useState(true);
+
   const [formState, dispatch] = useReducer(authReducer, {
     inputs: {
       email: {
@@ -54,7 +59,12 @@ const Auth = () => {
 
   const authFormSubmitHandler = event => {
     event.preventDefault();
+    auth.login();
     console.log("auth form submitted", formState.inputs);
+  }
+
+  const switchAuthHandler = () => {
+    setIsLoginMode(prevMode => !prevMode);
   }
 
   return (
@@ -65,12 +75,12 @@ const Auth = () => {
             Huetiful Voice
           </h2>
           <h2 className="mt-6 text-center text-3xl leading-9 text-indigo-700">
-            Sign in to your account
+            {isLoginMode ? "Sign in to your account" : "Sign up for free"}
           </h2>
           <p className="text-lg mt-2 text-center leading-5 text-indigo-700">
             or&nbsp;
-            <a href="#" className="text-lg text-indigo-500 hover:text-indigo-200 focus:outline-none focus:underline transition ease-in-out duration-150">
-               sign up for free
+            <a href="#" onClick={switchAuthHandler} className="text-lg text-indigo-500 hover:text-indigo-200 focus:outline-none focus:underline transition ease-in-out duration-150">
+              {isLoginMode ? "sign up for free" : "sign into an existing account"}
             </a>
           </p>
         </div>
@@ -78,18 +88,24 @@ const Auth = () => {
           <input type="hidden" name="remember" value="true" />
           <div className="rounded-md shadow-sm">
             <div>
-              <Input id="email"
-              placeholder="Email Address"
-              validators={[VALIDATOR_REQUIRE()]}
-              errorText="Email Address is required"
-              onInput={inputHandler} />
+              <Input
+                id="email"
+                type="email"
+                placeholder="Email Address"
+                validators={[VALIDATOR_EMAIL()]}
+                errorText="Please enter a valid email address"
+                onInput={inputHandler}
+              />
             </div>
             <div className="-mt-px">
-              <Input id="password"
-              placeholder="Password"
-              validators={[VALIDATOR_MINLENGTH(8)]}
-              errorText="Password must be at least 8 characters"
-              onInput={inputHandler} />
+              <Input
+                id="password"
+                type="password"
+                placeholder="Password"
+                validators={[VALIDATOR_MINLENGTH(8)]}
+                errorText="Password must be at least 8 characters"
+                onInput={inputHandler}
+              />
             </div>
           </div>
 
@@ -115,7 +131,7 @@ const Auth = () => {
                   <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
                 </svg>
               </span>
-              Sign in
+              {isLoginMode ? "Sign In" : "Sign Up"}
             </button>
           </div>
         </form>
