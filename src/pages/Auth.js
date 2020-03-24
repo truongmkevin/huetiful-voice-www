@@ -1,4 +1,5 @@
 import React, { useState, useReducer, useCallback, useContext } from 'react';
+import axios from 'axios';
 
 import Input from '../components/Input';
 import { AuthContext } from '../context/authContext';
@@ -57,8 +58,20 @@ const Auth = () => {
     });
   }, []);
 
-  const authFormSubmitHandler = event => {
+  const authFormSubmitHandler = async event => {
     event.preventDefault();
+
+    axios.post("http://localhost:3001/api/users/login",
+      {
+        user: {
+          email: formState.inputs.email.value,
+          password: formState.inputs.password.value
+        }
+      })
+      .then(res => {
+        console.log(res)
+      });
+
     auth.login();
     console.log("auth form submitted", formState.inputs);
   }
